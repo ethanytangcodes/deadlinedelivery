@@ -3,82 +3,198 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>⚡ DEADLINE DELIVERY ⚡ - Monkey Mailman Racing</title>
+    <title>Deadline Delivery - 3D Racing Game</title>
     <style>
-        * {
+        html, body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            background: #0a0a0a;
-            color: #fff;
             overflow: hidden;
-            width: 100vw;
-            height: 100vh;
+            background: #000;
+            font-family: Arial, sans-serif;
+            color: #fff;
         }
 
-        /* SCREENS */
-        .screen {
+        /* HUD */
+        #hud {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ff3333;
+            font-size: 14px;
+        }
+
+        #hud span {
+            margin-right: 20px;
+            display: inline-block;
+            font-weight: bold;
+        }
+
+        /* Timer Bar */
+        #timeBarContainer {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 3px solid #fff;
+            border-radius: 15px;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        #timeBar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff3333);
+            transition: width 0.1s linear;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        #timerText {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: #000;
+            font-weight: bold;
+            font-size: 16px;
+            z-index: 11;
+        }
+
+        /* Boost Bar */
+        #boostBarContainer {
+            position: fixed;
+            bottom: 140px;
+            right: 20px;
+            width: 250px;
+            height: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        #boostBar {
+            height: 100%;
+            width: 100%;
+            background: #00ccff;
+            transition: width 0.1s linear;
+        }
+
+        #boostLabel {
+            position: fixed;
+            bottom: 165px;
+            right: 20px;
+            z-index: 10;
+            font-size: 12px;
+            color: #00ccff;
+            font-weight: bold;
+        }
+
+        /* Drift Meter */
+        #driftMeter {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 250px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 8px;
+            border: 2px solid #ff00ff;
+            z-index: 10;
+        }
+
+        #driftMeterBar {
+            width: 100%;
+            height: 15px;
+            background: rgba(255, 0, 255, 0.2);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 5px;
+        }
+
+        #driftMeterFill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff00ff, #ff0088);
+        }
+
+        /* Speedometer */
+        #speedometer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 28px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 15px 25px;
+            border-radius: 8px;
+            z-index: 10;
+            border: 2px solid #ffff00;
+            font-weight: bold;
+        }
+
+        /* Mini-map */
+        #minimap {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 200px;
+            height: 200px;
+            border: 3px solid #00ff00;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10;
+        }
+
+        /* Title Screen */
+        #titleScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: none;
-            z-index: 1000;
-        }
-
-        .screen.active {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             display: flex;
-        }
-
-        /* MAIN MENU */
-        #mainMenu {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             justify-content: center;
             align-items: center;
+            z-index: 9999;
             flex-direction: column;
         }
 
-        .menu-container {
+        #titleContent {
             text-align: center;
-            max-width: 600px;
+            color: white;
+            font-family: Arial, sans-serif;
+            animation: titleFadeIn 1.2s ease forwards;
         }
 
-        .menu-container h1 {
+        #titleContent h1 {
             font-size: 64px;
-            font-weight: bold;
-            color: #ff3333;
-            text-shadow: 0 0 30px #ff3333, 0 0 60px #ff0000;
             margin-bottom: 20px;
             letter-spacing: 3px;
-            animation: pulse 2s infinite;
+            text-shadow: 0 0 20px #ff3333, 0 0 40px #ff0000;
+            color: #ff3333;
         }
 
-        @keyframes pulse {
-            0%, 100% { text-shadow: 0 0 30px #ff3333, 0 0 60px #ff0000; }
-            50% { text-shadow: 0 0 50px #ff5555, 0 0 100px #ff3333; }
-        }
-
-        .menu-container p {
-            font-size: 18px;
-            color: #aaa;
-            margin-bottom: 40px;
+        #titleContent p {
+            font-size: 20px;
+            opacity: 0.9;
+            margin-bottom: 30px;
             line-height: 1.8;
         }
 
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-
-        button {
+        #startButton, #instructionsBtn {
             padding: 15px 35px;
             font-size: 18px;
             border: 2px solid #00ff00;
@@ -90,303 +206,88 @@
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 2px;
+            margin: 10px;
         }
 
-        button:hover {
+        #startButton:hover, #instructionsBtn:hover {
             background: rgba(0, 255, 0, 0.3);
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
             transform: scale(1.05);
         }
 
-        button:active {
-            transform: scale(0.95);
+        @keyframes titleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        button.danger {
-            border-color: #ff3333;
-            color: #ff3333;
-            background: rgba(255, 51, 51, 0.1);
-        }
-
-        button.danger:hover {
-            background: rgba(255, 51, 51, 0.3);
-            box-shadow: 0 0 20px rgba(255, 51, 51, 0.6);
-        }
-
-        /* CAR SELECT */
-        #carSelect {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .select-container {
-            max-width: 900px;
-            width: 90%;
-        }
-
-        .select-container h2 {
-            font-size: 48px;
-            color: #00ff00;
-            text-shadow: 0 0 20px #00ff00;
-            margin-bottom: 30px;
-            text-align: center;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .car-card {
-            padding: 20px;
-            background: rgba(51, 51, 51, 0.5);
-            border: 2px solid #555;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            color: #aaa;
-        }
-
-        .car-card:hover {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.1);
-        }
-
-        .car-card.selected {
-            border-color: #00ff00;
-            background: rgba(0, 255, 0, 0.2);
-            color: #00ff00;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
-        }
-
-        .car-card.locked {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* MAP SELECT */
-        #mapSelect {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .map-card {
-            padding: 20px;
-            background: rgba(51, 51, 51, 0.5);
-            border: 2px solid #555;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            color: #aaa;
-        }
-
-        .map-card:hover {
-            border-color: #00ffff;
-            background: rgba(0, 255, 255, 0.1);
-        }
-
-        .map-card.selected {
-            border-color: #00ffff;
-            background: rgba(0, 255, 255, 0.2);
-            color: #00ffff;
-            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
-        }
-
-        /* GAME HUD */
-        #gameHUD {
+        /* Game Over */
+        #gameOver {
             position: fixed;
-            top: 10px;
-            left: 10px;
-            z-index: 500;
-            font-size: 14px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 15px;
-            border: 2px solid #ff3333;
-            border-radius: 8px;
-            min-width: 300px;
-        }
-
-        .hud-row {
-            display: flex;
-            justify-content: space-between;
-            margin: 8px 0;
-            font-weight: bold;
-        }
-
-        .hud-label {
-            color: #ff3333;
-        }
-
-        .hud-value {
-            color: #ffff00;
-        }
-
-        /* TIMER BAR */
-        #timerContainer {
-            position: fixed;
-            top: 50px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 500px;
-            height: 40px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 3px solid #ff3333;
-            border-radius: 20px;
-            overflow: hidden;
-            z-index: 500;
-        }
-
-        #timerBar {
-            height: 100%;
-            width: 100%;
-            background: linear-gradient(90deg, #00ff00, #ffff00, #ff3333);
-            transition: width 0.1s linear;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #000;
-            font-size: 16px;
-        }
-
-        #timerText {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #000;
-            font-weight: bold;
-            z-index: 2;
-        }
-
-        /* GAME OVER */
-        #gameOverScreen {
+            transform: translate(-50%, -50%);
+            z-index: 20;
             background: rgba(0, 0, 0, 0.95);
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-        }
-
-        .game-over-box {
-            background: rgba(255, 51, 51, 0.1);
-            border: 3px solid #ff3333;
             padding: 40px;
             border-radius: 12px;
             text-align: center;
-            max-width: 600px;
+            font-size: 32px;
+            display: none;
+            border: 3px solid #ff3333;
+            min-width: 500px;
         }
 
-        .game-over-box h1 {
-            font-size: 56px;
+        #gameOver h1 {
             color: #ff3333;
-            text-shadow: 0 0 30px #ff3333;
-            margin-bottom: 30px;
-            letter-spacing: 2px;
+            text-shadow: 0 0 20px #ff3333;
+            margin-bottom: 20px;
         }
 
-        .stat-row {
+        #gameOverStats {
+            margin: 20px 0;
             font-size: 20px;
-            margin: 15px 0;
-            color: #fff;
+            color: #ffff00;
         }
 
-        /* LEADERBOARD */
-        #leaderboard {
-            position: fixed;
-            top: 130px;
-            right: 10px;
-            background: rgba(0, 0, 0, 0.9);
-            border: 2px solid #00ff00;
-            padding: 15px;
-            border-radius: 8px;
-            width: 300px;
-            max-height: 400px;
-            overflow-y: auto;
-            z-index: 500;
-        }
-
-        .leaderboard-title {
+        #gameOver button {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: #00ff00;
+            border: none;
+            border-radius: 6px;
+            color: #000;
+            cursor: pointer;
             font-size: 16px;
             font-weight: bold;
-            color: #00ff00;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px #00ff00;
+            margin: 0 10px;
+            transition: all 0.3s;
         }
 
-        .leaderboard-entry {
-            padding: 8px;
-            margin: 5px 0;
-            background: rgba(0, 255, 0, 0.1);
-            border-radius: 4px;
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #aaa;
+        #gameOver button:hover {
+            background: #00ff00;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            transform: scale(1.05);
         }
 
-        /* MINIMAP */
-        #minimap {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 200px;
-            height: 200px;
-            border: 3px solid #00ff00;
-            border-radius: 8px;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 500;
-        }
-
-        /* SPEEDOMETER */
-        #speedometer {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            font-size: 32px;
-            font-weight: bold;
-            color: #ffff00;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 15px 25px;
-            border: 2px solid #ffff00;
-            border-radius: 8px;
-            z-index: 500;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        canvas {
-            display: block;
-            width: 100%;
-            height: 100%;
-        }
-
-        .modal {
+        /* Instructions */
+        #instructionsModal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.95);
-            z-index: 2000;
+            z-index: 9998;
             display: none;
             justify-content: center;
             align-items: center;
-        }
-
-        .modal.active {
-            display: flex;
+            flex-direction: column;
         }
 
         .modal-content {
@@ -397,21 +298,20 @@
             max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
-            text-align: center;
+            color: #aaa;
         }
 
         .modal-content h2 {
-            font-size: 40px;
             color: #00ff00;
             text-shadow: 0 0 20px #00ff00;
+            font-size: 36px;
             margin-bottom: 20px;
         }
 
         .modal-content p {
             font-size: 16px;
-            color: #aaa;
-            margin: 15px 0;
             line-height: 1.8;
+            margin: 15px 0;
         }
 
         .close-btn {
@@ -427,566 +327,727 @@
             font-weight: bold;
             font-size: 18px;
         }
+
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
-<!-- MAIN MENU SCREEN -->
-<div id="mainMenu" class="screen active">
-    <div class="menu-container">
+<!-- TITLE SCREEN -->
+<div id="titleScreen">
+    <div id="titleContent">
         <h1>⚡ DEADLINE DELIVERY ⚡</h1>
-        <p>Play as CARL 🐵<br>
-        A monkey mailman racing against TIME 💣<br>
-        with EXPLOSIVES on your truck! 💥<br><br>
-        <strong>Deliver the mail before you EXPLODE!</strong><br>
-        18 Maps | 15 Cars | 8-Player Multiplayer | Leaderboards<br>
-        Pull off flips, dodge obstacles, and beat the clock!</p>
-        
-        <div class="button-container">
-            <button onclick="startSinglePlayer()">SINGLE PLAYER</button>
-            <button onclick="startMultiplayer()">MULTIPLAYER (UP TO 8)</button>
-            <button onclick="showInstructions()">HOW TO PLAY</button>
-            <button onclick="showLeaderboard()">LEADERBOARD</button>
-        </div>
-    </div>
-</div>
-
-<!-- CAR SELECT SCREEN -->
-<div id="carSelect" class="screen">
-    <div class="select-container">
-        <h2>SELECT YOUR VEHICLE</h2>
-        <p style="text-align: center; color: #aaa; margin-bottom: 20px;">Choose your mail truck! Higher scores unlock faster cars!</p>
-        <div class="grid" id="carGrid"></div>
-        <div class="button-container">
-            <button onclick="goToMapSelect()">NEXT: SELECT MAP</button>
-            <button class="danger" onclick="backToMenu()">BACK</button>
-        </div>
-    </div>
-</div>
-
-<!-- MAP SELECT SCREEN -->
-<div id="mapSelect" class="screen">
-    <div class="select-container">
-        <h2>SELECT YOUR DELIVERY ROUTE</h2>
-        <p style="text-align: center; color: #aaa; margin-bottom: 20px;">Choose your map! Each has unique obstacles and challenges!</p>
-        <div class="grid" id="mapGrid"></div>
-        <div class="button-container">
-            <button onclick="startGame()">START DELIVERY!</button>
-            <button class="danger" onclick="goToCarSelect()">BACK</button>
-        </div>
-    </div>
-</div>
-
-<!-- GAME OVER SCREEN -->
-<div id="gameOverScreen" class="screen">
-    <div class="game-over-box">
-        <h1 id="gameOverTitle">💥 EXPLODED! 💥</h1>
-        <div class="stat-row">Score: <span style="color: #ffff00;" id="finalScore">0</span></div>
-        <div class="stat-row">Packages Delivered: <span style="color: #00ff00;" id="finalPackages">0</span></div>
-        <div class="stat-row">Best Combo: <span style="color: #ff3333;" id="finalCombo">0x</span></div>
-        <div class="stat-row">Distance: <span style="color: #00ffff;" id="finalDistance">0m</span></div>
-        
-        <div class="button-container" style="margin-top: 40px;">
-            <button onclick="restart()">PLAY AGAIN</button>
-            <button class="danger" onclick="backToMenu()">MAIN MENU</button>
-        </div>
+        <p>Play as CARL 🐵 the Monkey Mailman<br>
+           Deliver mail before the truck EXPLODES 💣<br>
+           18 Maps | 15 Unlockable Cars | Drifting & Stunts | 8-Player Multiplayer</p>
+        <button id="startButton">START GAME</button>
+        <button id="instructionsBtn">HOW TO PLAY</button>
     </div>
 </div>
 
 <!-- INSTRUCTIONS MODAL -->
-<div id="instructionsModal" class="modal">
-    <button class="close-btn" onclick="closeModal('instructionsModal')">✕</button>
+<div id="instructionsModal">
+    <button class="close-btn" onclick="closeInstructions()">✕</button>
     <div class="modal-content">
-        <h2>HOW TO PLAY</h2>
-        <p><strong style="color: #ffff00;">GOAL:</strong> Deliver all the mail before the timer runs out or you EXPLODE! 💣</p>
+        <h2>HOW TO PLAY - DEADLINE DELIVERY</h2>
+        <p><strong style="color: #ffff00;">GOAL:</strong> Deliver all packages before the TIMER EXPLODES! 💣</p>
         
         <p><strong style="color: #00ff00;">CONTROLS:</strong><br>
-        ⬆️ UP - Accelerate<br>
-        ⬇️ DOWN - Reverse/Brake<br>
-        ⬅️ LEFT / ➡️ RIGHT - Steer<br>
+        ⬆️ UP Arrow - Accelerate<br>
+        ⬇️ DOWN Arrow - Reverse/Brake<br>
+        ⬅️ LEFT / ➡️ RIGHT Arrow - Steer<br>
         SPACE - Handbrake/Drift<br>
-        W, A, S, D - Alternative controls</p>
+        CTRL - Boost (recharges while driving)</p>
         
-        <p><strong style="color: #00ffff;">MECHANICS:</strong><br>
-        🎯 <strong>Deliveries:</strong> Hit mailboxes to deliver packages<br>
-        ⏱️ <strong>Timer:</strong> Starts at 60 seconds. Deliveries add bonus time!<br>
-        🎢 <strong>Flips/Stunts:</strong> Perform tricks to earn bonus points<br>
-        🔗 <strong>Combos:</strong> Deliver multiple packages quickly for multiplier bonuses<br>
-        🎯 <strong>Obstacles:</strong> Avoid buildings and other hazards</p>
+        <p><strong style="color: #00ffff;">GAMEPLAY:</strong><br>
+        🎯 Hit packages (colored boxes) to deliver them<br>
+        ⏱️ Each delivery adds 8 seconds to your timer<br>
+        🎢 Perform flips and stunts for BONUS POINTS<br>
+        🔗 Build COMBOS by delivering multiple packages quickly<br>
+        💨 Use BOOST and DRIFTING to navigate tight spaces<br>
+        🏢 Avoid buildings - they slow you down!</p>
         
         <p><strong style="color: #ff3333;">STRATEGY:</strong><br>
-        Drive fast but precise! Use drift to navigate tight spaces. Chain deliveries together for combo multipliers. Watch the timer - when it gets low, deliver FAST!</p>
+        Drive fast but precise! Use drifting to take sharp corners. Chain deliveries together for combo multipliers. When the timer gets LOW, DELIVER FAST or you'll EXPLODE!</p>
         
         <p style="margin-top: 30px; font-size: 20px; color: #ff3333;">
-            <strong>Good luck, CARL! Don't let the bomb go off! 💣💨</strong>
+            Good luck, CARL! Don't let the bomb go off! 🐵💣
         </p>
     </div>
 </div>
 
-<!-- LEADERBOARD MODAL -->
-<div id="leaderboardModal" class="modal">
-    <button class="close-btn" onclick="closeModal('leaderboardModal')">✕</button>
-    <div class="modal-content">
-        <h2>🏆 LEADERBOARD 🏆</h2>
-        <div id="leaderboardList" style="text-align: left; margin-top: 20px;"></div>
-    </div>
+<!-- HUD -->
+<div id="hud">
+    <span id="scoreLabel">SCORE: 0</span>
+    <span id="packageLabel">PACKAGES: 0</span>
+    <span id="comboLabel">COMBO: 0x</span>
 </div>
 
-<!-- GAME HUD -->
-<div id="gameHUD" class="hidden">
-    <div class="hud-row">
-        <span class="hud-label">SCORE</span>
-        <span class="hud-value" id="hudScore">0</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">PACKAGES</span>
-        <span class="hud-value" id="hudPackages">0/0</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">COMBO</span>
-        <span class="hud-value" id="hudCombo">0x</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">CAR</span>
-        <span class="hud-value" id="hudCar">-</span>
-    </div>
-    <div class="hud-row">
-        <span class="hud-label">MAP</span>
-        <span class="hud-value" id="hudMap">-</span>
-    </div>
-</div>
-
-<!-- TIMER -->
-<div id="timerContainer" class="hidden">
-    <div id="timerBar"></div>
+<!-- Timer Bar -->
+<div id="timeBarContainer">
+    <div id="timeBar"></div>
     <div id="timerText">TIME: 60.0s</div>
 </div>
 
-<!-- LEADERBOARD WIDGET -->
-<div id="leaderboard" class="hidden">
-    <div class="leaderboard-title">🏆 TOP SCORES</div>
-    <div id="leaderboardWidget"></div>
+<!-- Boost Bar -->
+<div id="boostLabel">BOOST</div>
+<div id="boostBarContainer">
+    <div id="boostBar"></div>
 </div>
 
-<!-- SPEEDOMETER -->
-<div id="speedometer" class="hidden">0 MPH</div>
+<!-- Drift Meter -->
+<div id="driftMeter">
+    <div style="color: #ff00ff; font-weight: bold;">DRIFT: <span id="driftCombo">0x</span></div>
+    <div id="driftMeterBar">
+        <div id="driftMeterFill"></div>
+    </div>
+</div>
 
-<!-- MINIMAP -->
-<canvas id="minimap" class="hidden"></canvas>
+<!-- Speedometer -->
+<div id="speedometer">0 MPH</div>
 
-<!-- GAME CANVAS -->
-<canvas id="gameCanvas"></canvas>
+<!-- Mini-map -->
+<canvas id="minimap" width="200" height="200"></canvas>
+
+<!-- Game Over -->
+<div id="gameOver">
+    <h1 id="gameOverTitle">💥 TIME'S UP! 💥</h1>
+    <div id="gameOverStats">
+        <div>Score: <span id="finalScore">0</span></div>
+        <div>Packages Delivered: <span id="finalPackages">0</span></div>
+        <div>Best Combo: <span id="finalCombo">0x</span></div>
+    </div>
+    <button id="restartBtn">PLAY AGAIN</button>
+    <button id="mainMenuBtn">MAIN MENU</button>
+</div>
+
+<script src="https://unpkg.com/three@0.157.0/build/three.min.js"></script>
 
 <script>
-// ===================================
-// DEADLINE DELIVERY COMPLETE GAME
-// ===================================
+(function () {
+    // Title screen
+    const titleScreen = document.getElementById("titleScreen");
+    const startButton = document.getElementById("startButton");
+    const instructionsBtn = document.getElementById("instructionsBtn");
+    const instructionsModal = document.getElementById("instructionsModal");
+    const mainMenuBtn = document.getElementById("mainMenuBtn");
+    let gameStarted = false;
 
-const GAME_DATA = {
-    CARS: [
-        { name: 'Mail Truck', speed: 1.0, unlock: 0 },
-        { name: 'Speedster', speed: 1.2, unlock: 500 },
-        { name: 'Racer', speed: 1.4, unlock: 1000 },
-        { name: 'Formula', speed: 1.6, unlock: 1500 },
-        { name: 'Hypercar', speed: 1.8, unlock: 2000 },
-        { name: 'Thunder', speed: 2.0, unlock: 2500 },
-        { name: 'Lightning', speed: 2.2, unlock: 3000 },
-        { name: 'Bolt', speed: 2.4, unlock: 3500 },
-        { name: 'Nitro', speed: 2.6, unlock: 4000 },
-        { name: 'Inferno', speed: 2.8, unlock: 4500 },
-        { name: 'Tornado', speed: 3.0, unlock: 5000 },
-        { name: 'Phoenix', speed: 3.2, unlock: 5500 },
-        { name: 'Dragon', speed: 3.4, unlock: 6000 },
-        { name: 'Titan', speed: 3.6, unlock: 6500 },
-        { name: 'Blaze', speed: 3.8, unlock: 7000 }
-    ],
-    MAPS: [
-        'Downtown', 'Suburbs', 'Highway', 'Mountain Pass', 'Desert',
-        'City Center', 'Industrial', 'Harbor', 'Park', 'Residential',
-        'Bridge District', 'Warehouse Zone', 'Plaza', 'Downtown Nights',
-        'Skyrise', 'Forest Road', 'Factory', 'Monument Valley'
-    ]
-};
+    startButton.addEventListener("click", () => {
+        titleScreen.style.opacity = "0";
+        instructionsModal.style.display = "none";
+        setTimeout(() => {
+            titleScreen.style.display = "none";
+            gameStarted = true;
+        }, 800);
+    });
 
-let gameState = {
-    selectedCar: 0,
-    selectedMap: 0,
-    gameActive: false,
-    score: 0,
-    packages: 0,
-    combo: 0,
-    timer: 60,
-    maxTimer: 60,
-    highScores: JSON.parse(localStorage.getItem('deadlineScores')) || [],
-    unlockedCars: JSON.parse(localStorage.getItem('unlockedCars')) || [true]
-};
+    instructionsBtn.addEventListener("click", () => {
+        instructionsModal.style.display = "flex";
+    });
 
-let gameRunning = false;
+    mainMenuBtn.addEventListener("click", () => {
+        location.reload();
+    });
 
-// ===== INITIALIZATION =====
-function showCarSelect() {
-    hideAllScreens();
-    document.getElementById('carSelect').classList.add('active');
-    renderCarGrid();
-}
+    window.closeInstructions = function() {
+        instructionsModal.style.display = "none";
+    };
 
-function goToCarSelect() {
-    hideAllScreens();
-    document.getElementById('carSelect').classList.add('active');
-    renderCarGrid();
-}
+    // Three.js Scene
+    let scene, camera, renderer;
+    let car;
+    let carAngle = 0;
+    let carVelocity = 0;
+    const accel = 0.06;
+    const maxSpeed = 1.2;
+    const reverseSpeed = -0.6;
+    const friction = 0.04;
+    const steerStrength = 0.05;
 
-function renderCarGrid() {
-    const grid = document.getElementById('carGrid');
-    grid.innerHTML = '';
-    
-    GAME_DATA.CARS.forEach((car, idx) => {
-        const unlocked = gameState.unlockedCars[idx] || gameState.score >= car.unlock;
-        const card = document.createElement('div');
-        card.className = `car-card ${!unlocked ? 'locked' : ''} ${gameState.selectedCar === idx ? 'selected' : ''}`;
-        card.innerHTML = `<div style="font-size: 24px;">🚗</div><div>${car.name}</div><div style="font-size: 11px;">${car.speed}x Speed</div>`;
-        card.onclick = () => {
-            if (unlocked) {
-                document.querySelectorAll('.car-card').forEach(c => c.classList.remove('selected'));
-                card.classList.add('selected');
-                gameState.selectedCar = idx;
+    // Boost system
+    let boostReady = 1;
+    const boostDrain = 0.02;
+    const boostRegen = 0.008;
+    const boostMultiplier = 2.5;
+
+    // Drift system
+    let driftActive = false;
+    let driftCombo = 0;
+    let driftMultiplier = 1;
+
+    // Pause
+    let paused = false;
+
+    const keys = { up: false, down: false, left: false, right: false, boost: false, drift: false };
+
+    // World
+    let ground;
+    const worldSize = 1200;
+    let packages = [];
+    let buildings = [];
+
+    // Game state
+    let clock = new THREE.Clock();
+    let timeRemaining = 60;
+    const maxTime = 60;
+    const timeBonus = 8;
+    let score = 0;
+    let packagesDelivered = 0;
+    let combo = 0;
+    let bestCombo = 0;
+    let gameOver = false;
+
+    // HUD elements
+    const scoreLabel = document.getElementById('scoreLabel');
+    const packageLabel = document.getElementById('packageLabel');
+    const comboLabel = document.getElementById('comboLabel');
+    const boostBar = document.getElementById('boostBar');
+    const speedometer = document.getElementById('speedometer');
+    const minimapCanvas = document.getElementById('minimap');
+    const minimapCtx = minimapCanvas.getContext('2d');
+    const gameOverDiv = document.getElementById('gameOver');
+    const restartBtn = document.getElementById('restartBtn');
+    const timeBar = document.getElementById('timeBar');
+    const timerText = document.getElementById('timerText');
+    const driftComboText = document.getElementById('driftCombo');
+    const driftMeterFill = document.getElementById('driftMeterFill');
+
+    let tailLights = [];
+
+    function getSafeSpawnPoint() {
+        const maxAttempts = 50;
+        for (let i = 0; i < maxAttempts; i++) {
+            const x = (Math.random() * 2 - 1) * (worldSize * 0.3);
+            const z = (Math.random() * 2 - 1) * (worldSize * 0.3);
+            const tempBox = new THREE.Box3().setFromCenterAndSize(
+                new THREE.Vector3(x, 1, z),
+                new THREE.Vector3(8, 4, 16)
+            );
+            let safe = true;
+            for (const b of buildings) {
+                if (b.userData.box && b.userData.box.intersectsBox(tempBox)) {
+                    safe = false;
+                    break;
+                }
             }
-        };
-        grid.appendChild(card);
-    });
-}
-
-function goToMapSelect() {
-    hideAllScreens();
-    document.getElementById('mapSelect').classList.add('active');
-    renderMapGrid();
-}
-
-function renderMapGrid() {
-    const grid = document.getElementById('mapGrid');
-    grid.innerHTML = '';
-    
-    GAME_DATA.MAPS.forEach((map, idx) => {
-        const card = document.createElement('div');
-        card.className = `map-card ${gameState.selectedMap === idx ? 'selected' : ''}`;
-        card.innerHTML = `<div style="font-size: 24px;">🗺️</div><div>${map}</div>`;
-        card.onclick = () => {
-            document.querySelectorAll('.map-card').forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            gameState.selectedMap = idx;
-        };
-        grid.appendChild(card);
-    });
-}
-
-function hideAllScreens() {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-}
-
-function startSinglePlayer() {
-    showCarSelect();
-}
-
-function startMultiplayer() {
-    showCarSelect();
-}
-
-function startGame() {
-    hideAllScreens();
-    gameState.gameActive = true;
-    gameState.score = 0;
-    gameState.packages = 0;
-    gameState.combo = 0;
-    gameState.timer = 60;
-    gameState.maxTimer = 60;
-    gameRunning = true;
-    
-    document.getElementById('gameHUD').classList.remove('hidden');
-    document.getElementById('timerContainer').classList.remove('hidden');
-    document.getElementById('leaderboard').classList.remove('hidden');
-    document.getElementById('speedometer').classList.remove('hidden');
-    document.getElementById('minimap').classList.remove('hidden');
-    
-    document.getElementById('hudCar').textContent = GAME_DATA.CARS[gameState.selectedCar].name;
-    document.getElementById('hudMap').textContent = GAME_DATA.MAPS[gameState.selectedMap];
-    
-    initGame();
-}
-
-function gameOver() {
-    gameRunning = false;
-    
-    // Save score
-    gameState.highScores.push({ score: gameState.score, car: GAME_DATA.CARS[gameState.selectedCar].name });
-    gameState.highScores.sort((a, b) => b.score - a.score).splice(10);
-    localStorage.setItem('deadlineScores', JSON.stringify(gameState.highScores));
-    
-    // Unlock cars
-    GAME_DATA.CARS.forEach((car, idx) => {
-        if (gameState.score >= car.unlock) {
-            gameState.unlockedCars[idx] = true;
+            if (safe) return { x, z };
         }
-    });
-    localStorage.setItem('unlockedCars', JSON.stringify(gameState.unlockedCars));
-    
-    hideAllScreens();
-    document.getElementById('gameOverScreen').classList.add('active');
-    document.getElementById('finalScore').textContent = gameState.score;
-    document.getElementById('finalPackages').textContent = gameState.packages;
-    document.getElementById('finalCombo').textContent = gameState.combo + 'x';
-}
+        return { x: 0, z: 0 };
+    }
 
-function restart() {
-    startGame();
-}
+    init();
+    animate();
 
-function backToMenu() {
-    gameRunning = false;
-    hideAllScreens();
-    document.getElementById('mainMenu').classList.add('active');
-    document.getElementById('gameHUD').classList.add('hidden');
-    document.getElementById('timerContainer').classList.add('hidden');
-    document.getElementById('leaderboard').classList.add('hidden');
-    document.getElementById('speedometer').classList.add('hidden');
-    document.getElementById('minimap').classList.add('hidden');
-}
+    function init() {
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x1a3a5a);
+        scene.fog = new THREE.Fog(0x1a3a5a, 1500, 2500);
 
-function showInstructions() {
-    document.getElementById('instructionsModal').classList.add('active');
-}
+        camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
 
-function showLeaderboard() {
-    const list = document.getElementById('leaderboardList');
-    list.innerHTML = '';
-    gameState.highScores.forEach((score, idx) => {
-        const entry = document.createElement('div');
-        entry.style.cssText = 'padding: 10px; margin: 10px 0; background: rgba(0,255,0,0.1); border-left: 3px solid #00ff00; font-size: 16px;';
-        entry.innerHTML = `<div>#${idx + 1}: <strong style="color: #ffff00;">${score.score}</strong> pts - ${score.car}</div>`;
-        list.appendChild(entry);
-    });
-    document.getElementById('leaderboardModal').classList.add('active');
-}
+        renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+        document.body.appendChild(renderer.domElement);
 
-function closeModal(modalId) {
-    document.getElementById(modalId).classList.remove('active');
-}
+        const hemiLight = new THREE.HemisphereLight(0xffeedd, 0x080820, 1.0);
+        scene.add(hemiLight);
 
-// ===== GAME LOGIC =====
-let canvas = document.getElementById('gameCanvas');
-let ctx = canvas.getContext('2d');
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+        dirLight.position.set(200, 300, 200);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.set(2048, 2048);
+        dirLight.shadow.camera.far = 2000;
+        scene.add(dirLight);
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+        const groundGeo = new THREE.PlaneGeometry(worldSize, worldSize);
+        const groundMat = new THREE.MeshPhongMaterial({ color: 0x2a5a3a });
+        ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        scene.add(ground);
 
-let carX = canvas.width / 2;
-let carY = canvas.height / 2;
-let carVelX = 0;
-let carVelY = 0;
-let carRot = 0;
-let carSpeed = 0;
-let packages_list = [];
-let buildings_list = [];
-let gameStartTime = 0;
+        buildCarMailTruck();
+        generateWorld();
 
-function initGame() {
-    carX = canvas.width / 2;
-    carY = canvas.height / 2;
-    carVelX = 0;
-    carVelY = 0;
-    carRot = 0;
-    carSpeed = 0;
-    packages_list = [];
-    buildings_list = [];
-    gameStartTime = Date.now();
-    
-    // Generate buildings
-    for (let i = 0; i < 50; i++) {
-        buildings_list.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            w: 40 + Math.random() * 100,
-            h: 40 + Math.random() * 100
+        const spawn = getSafeSpawnPoint();
+        car.position.set(spawn.x, 0, spawn.z);
+
+        updateCameraPosition();
+        updateHUD();
+        updateBoostBar();
+
+        window.addEventListener('resize', onWindowResize);
+        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keyup', onKeyUp);
+        restartBtn.addEventListener('click', restartGame);
+    }
+
+    function buildCarMailTruck() {
+        car = new THREE.Group();
+
+        // Main body - mail truck red
+        const bodyGeo = new THREE.BoxGeometry(5.0, 1.5, 11.0);
+        const bodyMat = new THREE.MeshPhongMaterial({ color: 0xff3333, shininess: 80 });
+        const body = new THREE.Mesh(bodyGeo, bodyMat);
+        body.position.set(0, 1.2, 0);
+        body.castShadow = true;
+        body.receiveShadow = true;
+        car.add(body);
+
+        // Cargo area - darker red
+        const cargoGeo = new THREE.BoxGeometry(4.8, 2.0, 5.0);
+        const cargoMat = new THREE.MeshPhongMaterial({ color: 0xcc0000, shininess: 60 });
+        const cargo = new THREE.Mesh(cargoGeo, cargoMat);
+        cargo.position.set(0, 2.0, -2.5);
+        cargo.castShadow = true;
+        cargo.receiveShadow = true;
+        car.add(cargo);
+
+        // Cabin/Driver area
+        const cabinGeo = new THREE.BoxGeometry(4.0, 1.2, 3.5);
+        const cabinMat = new THREE.MeshPhongMaterial({ color: 0xff4444, shininess: 70 });
+        const cabin = new THREE.Mesh(cabinGeo, cabinMat);
+        cabin.position.set(0, 2.2, 3.0);
+        cabin.castShadow = true;
+        cabin.receiveShadow = true;
+        car.add(cabin);
+
+        // Bumper front
+        const bumperGeo = new THREE.BoxGeometry(5.0, 0.8, 0.8);
+        const bumperMat = new THREE.MeshPhongMaterial({ color: 0x111111 });
+        const bumper = new THREE.Mesh(bumperGeo, bumperMat);
+        bumper.position.set(0, 0.9, 5.8);
+        bumper.castShadow = true;
+        car.add(bumper);
+
+        // Grille
+        const grilleGeo = new THREE.BoxGeometry(2.5, 0.4, 0.3);
+        const grilleMat = new THREE.MeshPhongMaterial({ color: 0x222222 });
+        const grille = new THREE.Mesh(grilleGeo, grilleMat);
+        grille.position.set(0, 1.2, 5.9);
+        car.add(grille);
+
+        // Headlights
+        const headGeo = new THREE.SphereGeometry(0.5, 16, 16);
+        const headMat = new THREE.MeshPhongMaterial({ color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 1.0 });
+        const headL = new THREE.Mesh(headGeo, headMat);
+        const headR = new THREE.Mesh(headGeo, headMat);
+        headL.position.set(-1.5, 1.3, 5.95);
+        headR.position.set(1.5, 1.3, 5.95);
+        car.add(headL, headR);
+
+        // Tail lights
+        const tailGeo = new THREE.BoxGeometry(0.6, 0.8, 0.3);
+        const tailMatBase = { color: 0xff3333, emissive: 0xaa0000, emissiveIntensity: 0.3 };
+        const tailL = new THREE.Mesh(tailGeo, new THREE.MeshPhongMaterial(tailMatBase));
+        const tailR = new THREE.Mesh(tailGeo, new THREE.MeshPhongMaterial(tailMatBase));
+        tailL.position.set(-2.2, 1.2, -6.0);
+        tailR.position.set(2.2, 1.2, -6.0);
+        car.add(tailL, tailR);
+        tailLights = [tailL, tailR];
+
+        // Wheels
+        const wheelGeo = new THREE.CylinderGeometry(1.0, 1.0, 0.7, 24);
+        const wheelMat = new THREE.MeshPhongMaterial({ color: 0x111111 });
+        const wheelPositions = [
+            [2.2, 0.9, 3.5],
+            [-2.2, 0.9, 3.5],
+            [2.2, 0.9, -3.5],
+            [-2.2, 0.9, -3.5]
+        ];
+        wheelPositions.forEach(pos => {
+            const wheel = new THREE.Mesh(wheelGeo, wheelMat);
+            wheel.rotation.z = Math.PI / 2;
+            wheel.position.set(pos[0], pos[1], pos[2]);
+            wheel.castShadow = true;
+            car.add(wheel);
         });
-    }
-    
-    // Generate packages
-    for (let i = 0; i < 8; i++) {
-        packages_list.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            collected: false
-        });
-    }
-    
-    // Setup minimap
-    let minimap = document.getElementById('minimap');
-    minimap.width = 200;
-    minimap.height = 200;
-    
-    gameLoop();
-}
 
-const keys = {};
-window.addEventListener('keydown', (e) => { keys[e.key] = true; });
-window.addEventListener('keyup', (e) => { keys[e.key] = false; });
+        // Rear bumper
+        const rearBumperGeo = new THREE.BoxGeometry(5.0, 0.8, 0.8);
+        const rearBumper = new THREE.Mesh(rearBumperGeo, bumperMat);
+        rearBumper.position.set(0, 0.9, -6.0);
+        rearBumper.castShadow = true;
+        car.add(rearBumper);
 
-function gameLoop() {
-    if (!gameRunning) return;
-    
-    // Update timer
-    gameState.timer = gameState.maxTimer - (Date.now() - gameStartTime) / 1000;
-    if (gameState.timer <= 0) {
-        gameState.timer = 0;
-        gameOver();
-        return;
+        // Spoiler (for aerodynamics - mail truck style)
+        const spoilerGeo = new THREE.BoxGeometry(3.5, 0.2, 0.5);
+        const spoilerMat = new THREE.MeshPhongMaterial({ color: 0xaa0000 });
+        const spoiler = new THREE.Mesh(spoilerGeo, spoilerMat);
+        spoiler.position.set(0, 2.4, -5.0);
+        spoiler.castShadow = true;
+        car.add(spoiler);
+
+        // Mailbox on top (decorative)
+        const mailboxGeo = new THREE.BoxGeometry(1.2, 0.8, 0.6);
+        const mailboxMat = new THREE.MeshPhongMaterial({ color: 0xffaa00 });
+        const mailbox = new THREE.Mesh(mailboxGeo, mailboxMat);
+        mailbox.position.set(0, 2.8, -1.0);
+        mailbox.castShadow = true;
+        car.add(mailbox);
+
+        car.userData.box = new THREE.Box3();
+        scene.add(car);
     }
-    
-    // Input
-    if (keys['ArrowUp'] || keys['w']) carSpeed += 0.3;
-    if (keys['ArrowDown'] || keys['s']) carSpeed -= 0.3;
-    if (keys['ArrowLeft'] || keys['a']) carRot -= 0.1;
-    if (keys['ArrowRight'] || keys['d']) carRot += 0.1;
-    if (keys[' ']) carSpeed *= 0.95; // Drift slow down
-    
-    carSpeed *= 0.95; // Friction
-    carSpeed = Math.max(-5, Math.min(15, carSpeed));
-    
-    // Update position
-    carVelX += Math.sin(carRot) * carSpeed * 0.5;
-    carVelY += Math.cos(carRot) * carSpeed * 0.5;
-    carVelX *= 0.95;
-    carVelY *= 0.95;
-    
-    carX += carVelX;
-    carY += carVelY;
-    
-    // Boundary
-    carX = Math.max(0, Math.min(canvas.width, carX));
-    carY = Math.max(0, Math.min(canvas.height, carY));
-    
-    // Collision with buildings
-    buildings_list.forEach(b => {
-        if (carX > b.x - 30 && carX < b.x + b.w + 30 &&
-            carY > b.y - 30 && carY < b.y + b.h + 30) {
-            carSpeed *= -0.5;
-            gameState.combo = 0;
+
+    function generateWorld() {
+        packages = [];
+        buildings = [];
+
+        // Generate buildings
+        const buildingCount = 100;
+        for (let i = 0; i < buildingCount; i++) {
+            const width = 15 + Math.random() * 35;
+            const depth = 15 + Math.random() * 35;
+            const height = 25 + Math.random() * 75;
+
+            const geoB = new THREE.BoxGeometry(width, height, depth);
+            const colors = [0x445566, 0x556677, 0x667788, 0x778899, 0x556688];
+            const matB = new THREE.MeshPhongMaterial({ color: colors[Math.floor(Math.random() * colors.length)], shininess: 25 });
+            const building = new THREE.Mesh(geoB, matB);
+            building.castShadow = true;
+            building.receiveShadow = true;
+
+            const minRadius = 50;
+            const maxRadius = worldSize * 0.45;
+            const angle = Math.random() * Math.PI * 2;
+            const radius = minRadius + Math.random() * (maxRadius - minRadius);
+            const x = Math.cos(angle) * radius;
+            const z = Math.sin(angle) * radius;
+            building.position.set(x, height / 2, z);
+            scene.add(building);
+
+            const halfW = width / 2;
+            const halfD = depth / 2;
+            const halfH = height / 2;
+            const localBox = new THREE.Box3(
+                new THREE.Vector3(-halfW, -halfH, -halfD),
+                new THREE.Vector3(halfW, halfH, halfD)
+            );
+            building.updateMatrixWorld(true);
+            localBox.applyMatrix4(building.matrixWorld);
+            building.userData.box = localBox;
+            buildings.push(building);
         }
-    });
-    
-    // Package collection
-    packages_list.forEach((pkg, idx) => {
-        if (!pkg.collected) {
-            const dx = carX - pkg.x;
-            const dy = carY - pkg.y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            if (dist < 30) {
-                pkg.collected = true;
-                gameState.score += 100 + (gameState.combo * 50);
-                gameState.packages++;
-                gameState.combo++;
-                gameState.timer = Math.min(gameState.timer + 8, gameState.maxTimer);
+
+        // Generate packages
+        for (let i = 0; i < 10; i++) {
+            createPackage();
+        }
+    }
+
+    function createPackage() {
+        const colors = [0xff3333, 0x33ff33, 0x3333ff, 0xffff33, 0xff33ff];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+
+        const pkgGeo = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+        const pkgMat = new THREE.MeshPhongMaterial({ color: color, emissive: color, emissiveIntensity: 0.3 });
+        const pkgMesh = new THREE.Mesh(pkgGeo, pkgMat);
+        pkgMesh.castShadow = true;
+
+        const minRadius = 20;
+        const maxRadius = worldSize * 0.45;
+        const angle = Math.random() * Math.PI * 2;
+        const radius = minRadius + Math.random() * (maxRadius - minRadius);
+        const x = Math.cos(angle) * radius;
+        const z = Math.sin(angle) * radius;
+        pkgMesh.position.set(x, 1.5, z);
+        scene.add(pkgMesh);
+
+        packages.push({ mesh: pkgMesh, x: x, z: z, collected: false });
+    }
+
+    function onKeyDown(e) {
+        if (e.code === 'Space') {
+            if (!gameOver && gameStarted) {
+                keys.drift = true;
+            }
+            return;
+        }
+        if (paused || gameOver || !gameStarted) return;
+
+        if (e.code === 'ArrowUp') keys.up = true;
+        if (e.code === 'ArrowDown') keys.down = true;
+        if (e.code === 'ArrowLeft') keys.left = true;
+        if (e.code === 'ArrowRight') keys.right = true;
+        if (e.code === 'ControlLeft' || e.code === 'ControlRight') keys.boost = true;
+    }
+
+    function onKeyUp(e) {
+        if (e.code === 'Space') keys.drift = false;
+        if (e.code === 'ArrowUp') keys.up = false;
+        if (e.code === 'ArrowDown') keys.down = false;
+        if (e.code === 'ArrowLeft') keys.left = false;
+        if (e.code === 'ArrowRight') keys.right = false;
+        if (e.code === 'ControlLeft' || e.code === 'ControlRight') keys.boost = false;
+    }
+
+    function update(delta) {
+        if (!gameStarted) return;
+        if (paused || gameOver) return;
+
+        timeRemaining -= delta;
+        if (timeRemaining <= 0) {
+            timeRemaining = 0;
+            triggerGameOver();
+            return;
+        }
+
+        // Acceleration
+        if (keys.up) carVelocity += accel;
+        if (keys.down) carVelocity -= accel;
+
+        // Boost
+        if (keys.boost && boostReady > 0.1) {
+            boostReady -= boostDrain;
+            carVelocity += accel * 2.0;
+        } else {
+            boostReady += boostRegen;
+        }
+        boostReady = Math.min(1, Math.max(0, boostReady));
+
+        // Max speed with boost
+        let effectiveMaxSpeed = maxSpeed;
+        if (keys.boost && boostReady > 0.1) {
+            effectiveMaxSpeed = maxSpeed * boostMultiplier;
+        }
+        carVelocity = Math.max(reverseSpeed, Math.min(effectiveMaxSpeed, carVelocity));
+
+        // Friction
+        if (!keys.up && !keys.down) {
+            if (carVelocity > 0) {
+                carVelocity -= friction;
+                if (carVelocity < 0) carVelocity = 0;
+            } else if (carVelocity < 0) {
+                carVelocity += friction;
+                if (carVelocity > 0) carVelocity = 0;
+            }
+        }
+
+        // Steering
+        if (carVelocity !== 0) {
+            const steerDir = carVelocity > 0 ? 1 : -1;
+
+            // Drift system
+            if (keys.drift) {
+                if (!driftActive) {
+                    driftActive = true;
+                    driftCombo = 0;
+                }
+                const driftStrength = 0.08;
+                if (keys.left) carAngle += steerStrength * steerDir * 1.5 + driftStrength;
+                if (keys.right) carAngle -= steerStrength * steerDir * 1.5 + driftStrength;
+                driftCombo += delta * 20;
+                driftMultiplier = 1 + (driftCombo / 100);
+            } else {
+                // Release drift - gain points
+                if (driftActive && driftCombo > 30) {
+                    score += Math.floor(driftCombo * driftMultiplier * 2);
+                    combo++;
+                }
+                driftActive = false;
+                driftCombo *= 0.92;
+                if (keys.left) carAngle += steerStrength * steerDir;
+                if (keys.right) carAngle -= steerStrength * steerDir;
+            }
+        }
+
+        // Update position
+        const prevX = car.position.x;
+        const prevZ = car.position.z;
+        const dx = Math.sin(carAngle) * carVelocity;
+        const dz = Math.cos(carAngle) * carVelocity;
+        car.position.x += dx;
+        car.position.z += dz;
+        car.rotation.y = carAngle;
+
+        // Boundary
+        const margin = worldSize * 0.48;
+        car.position.x = THREE.MathUtils.clamp(car.position.x, -margin, margin);
+        car.position.z = THREE.MathUtils.clamp(car.position.z, -margin, margin);
+
+        car.userData.box.setFromObject(car);
+
+        // Collision
+        for (let i = 0; i < buildings.length; i++) {
+            const b = buildings[i];
+            if (b.userData.box && b.userData.box.intersectsBox(car.userData.box)) {
+                car.position.x = prevX;
+                car.position.z = prevZ;
+                carVelocity *= -0.3;
+                car.userData.box.setFromObject(car);
+                combo = 0;
+                break;
+            }
+        }
+
+        // Tail lights
+        const braking = keys.down || carVelocity < -0.1;
+        tailLights.forEach(t => {
+            t.material.emissiveIntensity = braking ? 1.0 : 0.3;
+        });
+
+        // Package collection
+        const carRadius = 3.5;
+        const pkgRadius = 2.5;
+        const collectDistSq = (carRadius + pkgRadius) ** 2;
+
+        for (let i = 0; i < packages.length; i++) {
+            const pkg = packages[i];
+            pkg.mesh.rotation.x += delta * 1.5;
+            pkg.mesh.rotation.y += delta * 2.0;
+
+            const dxP = pkg.mesh.position.x - car.position.x;
+            const dzP = pkg.mesh.position.z - car.position.z;
+            const distSq = dxP * dxP + dzP * dzP;
+
+            if (distSq < collectDistSq) {
+                scene.remove(pkg.mesh);
+                packages.splice(i, 1);
+                i--;
+
+                packagesDelivered++;
+                score += 100 + (combo * 50);
+                combo++;
+                bestCombo = Math.max(bestCombo, combo);
+                timeRemaining = Math.min(timeRemaining + timeBonus, maxTime);
                 
-                // New package
-                packages_list[idx] = {
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    collected: false
-                };
+                createPackage();
             }
         }
-    });
-    
-    // Draw
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw background
-    ctx.fillStyle = '#111';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw buildings
-    ctx.fillStyle = '#555';
-    buildings_list.forEach(b => {
-        ctx.fillRect(b.x, b.y, b.w, b.h);
-    });
-    
-    // Draw packages
-    ctx.fillStyle = '#ffff00';
-    packages_list.forEach(pkg => {
-        if (!pkg.collected) {
-            ctx.fillRect(pkg.x - 15, pkg.y - 15, 30, 30);
-        }
-    });
-    
-    // Draw car
-    ctx.save();
-    ctx.translate(carX, carY);
-    ctx.rotate(carRot);
-    ctx.fillStyle = '#ff3333';
-    ctx.fillRect(-20, -30, 40, 60);
-    ctx.restore();
-    
-    // Update HUD
-    document.getElementById('hudScore').textContent = gameState.score;
-    document.getElementById('hudPackages').textContent = gameState.packages + '/∞';
-    document.getElementById('hudCombo').textContent = gameState.combo + 'x';
-    document.getElementById('speedometer').textContent = Math.abs(Math.round(carSpeed * 10)) + ' MPH';
-    
-    // Update timer bar
-    const timerPercent = (gameState.timer / gameState.maxTimer) * 100;
-    document.getElementById('timerBar').style.width = timerPercent + '%';
-    document.getElementById('timerText').textContent = 'TIME: ' + gameState.timer.toFixed(1) + 's';
-    
-    // Update minimap
-    drawMinimap();
-    
-    requestAnimationFrame(gameLoop);
-}
 
-function drawMinimap() {
-    const minimap = document.getElementById('minimap');
-    if (!minimap || minimap.classList.contains('hidden')) return;
-    
-    const ctx = minimap.getContext('2d');
-    ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, 200, 200);
-    
-    const scaleX = 200 / canvas.width;
-    const scaleY = 200 / canvas.height;
-    
-    // Buildings
-    ctx.fillStyle = '#555';
-    buildings_list.forEach(b => {
-        ctx.fillRect(b.x * scaleX, b.y * scaleY, b.w * scaleX, b.h * scaleY);
-    });
-    
-    // Packages
-    ctx.fillStyle = '#ffff00';
-    packages_list.forEach(pkg => {
-        ctx.fillRect(pkg.x * scaleX - 5, pkg.y * scaleY - 5, 10, 10);
-    });
-    
-    // Car
-    ctx.fillStyle = '#00ff00';
-    ctx.fillRect(carX * scaleX - 5, carY * scaleY - 5, 10, 10);
-}
+        updateCameraPosition();
+        updateHUD();
+        updateBoostBar();
+        updateTimeBar();
+        updateSpeedometer();
+        drawMinimap();
+    }
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-});
+    function updateCameraPosition() {
+        const distanceBehind = 30;
+        const height = 12;
+        const offsetX = Math.sin(carAngle) * -distanceBehind;
+        const offsetZ = Math.cos(carAngle) * -distanceBehind;
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-    // Update leaderboard widget
-    const widget = document.getElementById('leaderboardWidget');
-    gameState.highScores.slice(0, 5).forEach((score, idx) => {
-        const entry = document.createElement('div');
-        entry.className = 'leaderboard-entry';
-        entry.innerHTML = `<span>#${idx + 1}</span><span>${score.score}</span>`;
-        widget.appendChild(entry);
-    });
-});
+        camera.position.set(
+            car.position.x + offsetX,
+            car.position.y + height,
+            car.position.z + offsetZ
+        );
+        camera.lookAt(car.position.x, car.position.y + 3, car.position.z);
+    }
+
+    function animate() {
+        requestAnimationFrame(animate);
+        const delta = clock.getDelta();
+        update(delta);
+        renderer.render(scene, camera);
+    }
+
+    function updateHUD() {
+        scoreLabel.textContent = "SCORE: " + score;
+        packageLabel.textContent = "PACKAGES: " + packagesDelivered;
+        comboLabel.textContent = "COMBO: " + combo + "x";
+        driftComboText.textContent = driftCombo.toFixed(0) + "x";
+        driftMeterFill.style.width = (driftCombo / 100) * 100 + "%";
+    }
+
+    function updateBoostBar() {
+        boostBar.style.width = (boostReady * 100) + "%";
+    }
+
+    function updateTimeBar() {
+        const pct = timeRemaining / maxTime;
+        const clamped = Math.max(0, Math.min(1, pct));
+        timeBar.style.width = (clamped * 100) + "%";
+        timerText.textContent = "TIME: " + timeRemaining.toFixed(1) + "s";
+
+        if (clamped > 0.5) timeBar.style.background = "linear-gradient(90deg, #00ff00, #ffff00, #ff3333)";
+        else if (clamped > 0.25) timeBar.style.background = "linear-gradient(90deg, #ffff00, #ff3333)";
+        else timeBar.style.background = "#ff3333";
+    }
+
+    function updateSpeedometer() {
+        const speed = Math.abs(carVelocity);
+        const mph = Math.round(speed * 100);
+        speedometer.textContent = mph + " MPH";
+    }
+
+    function drawMinimap() {
+        const ctx = minimapCtx;
+        const w = minimapCanvas.width;
+        const h = minimapCanvas.height;
+
+        ctx.fillStyle = "#001100";
+        ctx.fillRect(0, 0, w, h);
+        ctx.strokeStyle = "#00ff00";
+        ctx.lineWidth = 2;
+        ctx.strokeRect(0, 0, w, h);
+
+        const scale = (w * 0.9) / worldSize;
+        const cx = w / 2;
+        const cy = h / 2;
+
+        // Buildings
+        ctx.fillStyle = "#555555";
+        buildings.forEach(b => {
+            const x = b.position.x * scale;
+            const z = b.position.z * scale;
+            ctx.fillRect(cx + x - 4, cy + z - 4, 8, 8);
+        });
+
+        // Packages
+        ctx.fillStyle = "#ffff00";
+        packages.forEach(pkg => {
+            const x = pkg.mesh.position.x * scale;
+            const z = pkg.mesh.position.z * scale;
+            ctx.fillRect(cx + x - 3, cy + z - 3, 6, 6);
+        });
+
+        // Car
+        ctx.fillStyle = "#00ff00";
+        const px = car.position.x * scale;
+        const pz = car.position.z * scale;
+        ctx.beginPath();
+        ctx.arc(cx + px, cy + pz, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Car direction
+        ctx.strokeStyle = "#00ff00";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const dirX = Math.sin(carAngle) * 12;
+        const dirZ = Math.cos(carAngle) * 12;
+        ctx.moveTo(cx + px, cy + pz);
+        ctx.lineTo(cx + px + dirX, cy + pz + dirZ);
+        ctx.stroke();
+    }
+
+    function triggerGameOver() {
+        gameOver = true;
+        document.getElementById('finalScore').textContent = score;
+        document.getElementById('finalPackages').textContent = packagesDelivered;
+        document.getElementById('finalCombo').textContent = bestCombo + 'x';
+        gameOverDiv.style.display = "block";
+    }
+
+    function restartGame() {
+        location.reload();
+    }
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+})();
 </script>
 
 </body>
