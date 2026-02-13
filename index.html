@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ DEADLINE DELIVERY ⚡ - Monkey Mailman Racing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* SCREENS */
+        .screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            z-index: 1000;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* MAIN MENU */
+        #mainMenu {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .menu-container {
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .menu-container h1 {
+            font-size: 64px;
+            font-weight: bold;
+            color: #ff3333;
+            text-shadow: 0 0 30px #ff3333, 0 0 60px #ff0000;
+            margin-bottom: 20px;
+            letter-spacing: 3px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { text-shadow: 0 0 30px #ff3333, 0 0 60px #ff0000; }
+            50% { text-shadow: 0 0 50px #ff5555, 0 0 100px #ff3333; }
+        }
+
+        .menu-container p {
+            font-size: 18px;
+            color: #aaa;
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 18px;
+            border: 2px solid #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+            color: #00ff00;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        button:hover {
+            background: rgba(0, 255, 0, 0.3);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button.danger {
+            border-color: #ff3333;
+            color: #ff3333;
+            background: rgba(255, 51, 51, 0.1);
+        }
+
+        button.danger:hover {
+            background: rgba(255, 51, 51, 0.3);
+            box-shadow: 0 0 20px rgba(255, 51, 51, 0.6);
+        }
+
+        /* CAR SELECT */
+        #carSelect {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .select-container {
+            max-width: 900px;
+            width: 90%;
+        }
+
+        .select-container h2 {
+            font-size: 48px;
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .car-card {
+            padding: 20px;
+            background: rgba(51, 51, 51, 0.5);
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            color: #aaa;
+        }
+
+        .car-card:hover {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .car-card.selected {
+            border-color: #00ff00;
+            background: rgba(0, 255, 0, 0.2);
+            color: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+        }
+
+        .car-card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* MAP SELECT */
+        #mapSelect {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .map-card {
+            padding: 20px;
+            background: rgba(51, 51, 51, 0.5);
+            border: 2px solid #555;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            color: #aaa;
+        }
+
+        .map-card:hover {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+        }
+
+        .map-card.selected {
+            border-color: #00ffff;
+            background: rgba(0, 255, 255, 0.2);
+            color: #00ffff;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+        }
+
+        /* GAME HUD */
+        #gameHUD {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 500;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px;
+            border: 2px solid #ff3333;
+            border-radius: 8px;
+            min-width: 300px;
+        }
+
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 8px 0;
+            font-weight: bold;
+        }
+
+        .hud-label {
+            color: #ff3333;
+        }
+
+        .hud-value {
+            color: #ffff00;
+        }
+
+        /* TIMER BAR */
+        #timerContainer {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            height: 40px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #ff3333;
+            border-radius: 20px;
+            overflow: hidden;
+            z-index: 500;
+        }
+
+        #timerBar {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, #00ff00, #ffff00, #ff3333);
+            transition: width 0.1s linear;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 16px;
+        }
+
+        #timerText {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        /* GAME OVER */
+        #gameOverScreen {
+            background: rgba(0, 0, 0, 0.95);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .game-over-box {
+            background: rgba(255, 51, 51, 0.1);
+            border: 3px solid #ff3333;
+            padding: 40px;
+            border-radius: 12px;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .game-over-box h1 {
+            font-size: 56px;
+            color: #ff3333;
+            text-shadow: 0 0 30px #ff3333;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .stat-row {
+            font-size: 20px;
+            margin: 15px 0;
+            color: #fff;
+        }
+
+        /* LEADERBOARD */
+        #leaderboard {
+            position: fixed;
+            top: 130px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 2px solid #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            z-index: 500;
+        }
+
+        .leaderboard-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00ff00;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px #00ff00;
+        }
+
+        .leaderboard-entry {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(0, 255, 0, 0.1);
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* MINIMAP */
+        #minimap {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 200px;
+            height: 200px;
+            border: 3px solid #00ff00;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 500;
+        }
+
+        /* SPEEDOMETER */
+        #speedometer {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            font-size: 32px;
+            font-weight: bold;
+            color: #ffff00;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 25px;
+            border: 2px solid #ffff00;
+            border-radius: 8px;
+            z-index: 500;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: rgba(0, 0, 0, 0.9);
+            border: 3px solid #00ff00;
+            padding: 40px;
+            border-radius: 12px;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+        }
+
+        .modal-content h2 {
+            font-size: 40px;
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            color: #aaa;
+            margin: 15px 0;
+            line-height: 1.8;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ff3333;
+            border: none;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- MAIN MENU SCREEN -->
+<div id="mainMenu" class="screen active">
+    <div class="menu-container">
+        <h1>⚡ DEADLINE DELIVERY ⚡</h1>
+        <p>Play as CARL 🐵<br>
+        A monkey mailman racing against TIME 💣<br>
+        with EXPLOSIVES on your truck! 💥<br><br>
+        <strong>Deliver the mail before you EXPLODE!</strong><br>
+        18 Maps | 15 Cars | 8-Player Multiplayer | Leaderboards<br>
+        Pull off flips, dodge obstacles, and beat the clock!</p>
+        
+        <div class="button-container">
+            <button onclick="startSinglePlayer()">SINGLE PLAYER</button>
+            <button onclick="startMultiplayer()">MULTIPLAYER (UP TO 8)</button>
+            <button onclick="showInstructions()">HOW TO PLAY</button>
+            <button onclick="showLeaderboard()">LEADERBOARD</button>
+        </div>
+    </div>
+</div>
+
+<!-- CAR SELECT SCREEN -->
+<div id="carSelect" class="screen">
+    <div class="select-container">
+        <h2>SELECT YOUR VEHICLE</h2>
+        <p style="text-align: center; color: #aaa; margin-bottom: 20px;">Choose your mail truck! Higher scores unlock faster cars!</p>
+        <div class="grid" id="carGrid"></div>
+        <div class="button-container">
+            <button onclick="goToMapSelect()">NEXT: SELECT MAP</button>
+            <button class="danger" onclick="backToMenu()">BACK</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAP SELECT SCREEN -->
+<div id="mapSelect" class="screen">
+    <div class="select-container">
+        <h2>SELECT YOUR DELIVERY ROUTE</h2>
+        <p style="text-align: center; color: #aaa; margin-bottom: 20px;">Choose your map! Each has unique obstacles and challenges!</p>
+        <div class="grid" id="mapGrid"></div>
+        <div class="button-container">
+            <button onclick="startGame()">START DELIVERY!</button>
+            <button class="danger" onclick="goToCarSelect()">BACK</button>
+        </div>
+    </div>
+</div>
+
+<!-- GAME OVER SCREEN -->
+<div id="gameOverScreen" class="screen">
+    <div class="game-over-box">
+        <h1 id="gameOverTitle">💥 EXPLODED! 💥</h1>
+        <div class="stat-row">Score: <span style="color: #ffff00;" id="finalScore">0</span></div>
+        <div class="stat-row">Packages Delivered: <span style="color: #00ff00;" id="finalPackages">0</span></div>
+        <div class="stat-row">Best Combo: <span style="color: #ff3333;" id="finalCombo">0x</span></div>
+        <div class="stat-row">Distance: <span style="color: #00ffff;" id="finalDistance">0m</span></div>
+        
+        <div class="button-container" style="margin-top: 40px;">
+            <button onclick="restart()">PLAY AGAIN</button>
+            <button class="danger" onclick="backToMenu()">MAIN MENU</button>
+        </div>
+    </div>
+</div>
+
+<!-- INSTRUCTIONS MODAL -->
+<div id="instructionsModal" class="modal">
+    <button class="close-btn" onclick="closeModal('instructionsModal')">✕</button>
+    <div class="modal-content">
+        <h2>HOW TO PLAY</h2>
+        <p><strong style="color: #ffff00;">GOAL:</strong> Deliver all the mail before the timer runs out or you EXPLODE! 💣</p>
+        
+        <p><strong style="color: #00ff00;">CONTROLS:</strong><br>
+        ⬆️ UP - Accelerate<br>
+        ⬇️ DOWN - Reverse/Brake<br>
+        ⬅️ LEFT / ➡️ RIGHT - Steer<br>
+        SPACE - Handbrake/Drift<br>
+        W, A, S, D - Alternative controls</p>
+        
+        <p><strong style="color: #00ffff;">MECHANICS:</strong><br>
+        🎯 <strong>Deliveries:</strong> Hit mailboxes to deliver packages<br>
+        ⏱️ <strong>Timer:</strong> Starts at 60 seconds. Deliveries add bonus time!<br>
+        🎢 <strong>Flips/Stunts:</strong> Perform tricks to earn bonus points<br>
+        🔗 <strong>Combos:</strong> Deliver multiple packages quickly for multiplier bonuses<br>
+        🎯 <strong>Obstacles:</strong> Avoid buildings and other hazards</p>
+        
+        <p><strong style="color: #ff3333;">STRATEGY:</strong><br>
+        Drive fast but precise! Use drift to navigate tight spaces. Chain deliveries together for combo multipliers. Watch the timer - when it gets low, deliver FAST!</p>
+        
+        <p style="margin-top: 30px; font-size: 20px; color: #ff3333;">
+            <strong>Good luck, CARL! Don't let the bomb go off! 💣💨</strong>
+        </p>
+    </div>
+</div>
+
+<!-- LEADERBOARD MODAL -->
+<div id="leaderboardModal" class="modal">
+    <button class="close-btn" onclick="closeModal('leaderboardModal')">✕</button>
+    <div class="modal-content">
+        <h2>🏆 LEADERBOARD 🏆</h2>
+        <div id="leaderboardList" style="text-align: left; margin-top: 20px;"></div>
+    </div>
+</div>
+
+<!-- GAME HUD -->
+<div id="gameHUD" class="hidden">
+    <div class="hud-row">
+        <span class="hud-label">SCORE</span>
+        <span class="hud-value" id="hudScore">0</span>
+    </div>
+    <div class="hud-row">
+        <span class="hud-label">PACKAGES</span>
+        <span class="hud-value" id="hudPackages">0/0</span>
+    </div>
+    <div class="hud-row">
+        <span class="hud-label">COMBO</span>
+        <span class="hud-value" id="hudCombo">0x</span>
+    </div>
+    <div class="hud-row">
+        <span class="hud-label">CAR</span>
+        <span class="hud-value" id="hudCar">-</span>
+    </div>
+    <div class="hud-row">
+        <span class="hud-label">MAP</span>
+        <span class="hud-value" id="hudMap">-</span>
+    </div>
+</div>
+
+<!-- TIMER -->
+<div id="timerContainer" class="hidden">
+    <div id="timerBar"></div>
+    <div id="timerText">TIME: 60.0s</div>
+</div>
+
+<!-- LEADERBOARD WIDGET -->
+<div id="leaderboard" class="hidden">
+    <div class="leaderboard-title">🏆 TOP SCORES</div>
+    <div id="leaderboardWidget"></div>
+</div>
+
+<!-- SPEEDOMETER -->
+<div id="speedometer" class="hidden">0 MPH</div>
+
+<!-- MINIMAP -->
+<canvas id="minimap" class="hidden"></canvas>
+
+<!-- GAME CANVAS -->
+<canvas id="gameCanvas"></canvas>
+
+<script>
+// ===================================
+// DEADLINE DELIVERY COMPLETE GAME
+// ===================================
+
+const GAME_DATA = {
+    CARS: [
+        { name: 'Mail Truck', speed: 1.0, unlock: 0 },
+        { name: 'Speedster', speed: 1.2, unlock: 500 },
+        { name: 'Racer', speed: 1.4, unlock: 1000 },
+        { name: 'Formula', speed: 1.6, unlock: 1500 },
+        { name: 'Hypercar', speed: 1.8, unlock: 2000 },
+        { name: 'Thunder', speed: 2.0, unlock: 2500 },
+        { name: 'Lightning', speed: 2.2, unlock: 3000 },
+        { name: 'Bolt', speed: 2.4, unlock: 3500 },
+        { name: 'Nitro', speed: 2.6, unlock: 4000 },
+        { name: 'Inferno', speed: 2.8, unlock: 4500 },
+        { name: 'Tornado', speed: 3.0, unlock: 5000 },
+        { name: 'Phoenix', speed: 3.2, unlock: 5500 },
+        { name: 'Dragon', speed: 3.4, unlock: 6000 },
+        { name: 'Titan', speed: 3.6, unlock: 6500 },
+        { name: 'Blaze', speed: 3.8, unlock: 7000 }
+    ],
+    MAPS: [
+        'Downtown', 'Suburbs', 'Highway', 'Mountain Pass', 'Desert',
+        'City Center', 'Industrial', 'Harbor', 'Park', 'Residential',
+        'Bridge District', 'Warehouse Zone', 'Plaza', 'Downtown Nights',
+        'Skyrise', 'Forest Road', 'Factory', 'Monument Valley'
+    ]
+};
+
+let gameState = {
+    selectedCar: 0,
+    selectedMap: 0,
+    gameActive: false,
+    score: 0,
+    packages: 0,
+    combo: 0,
+    timer: 60,
+    maxTimer: 60,
+    highScores: JSON.parse(localStorage.getItem('deadlineScores')) || [],
+    unlockedCars: JSON.parse(localStorage.getItem('unlockedCars')) || [true]
+};
+
+let gameRunning = false;
+
+// ===== INITIALIZATION =====
+function showCarSelect() {
+    hideAllScreens();
+    document.getElementById('carSelect').classList.add('active');
+    renderCarGrid();
+}
+
+function goToCarSelect() {
+    hideAllScreens();
+    document.getElementById('carSelect').classList.add('active');
+    renderCarGrid();
+}
+
+function renderCarGrid() {
+    const grid = document.getElementById('carGrid');
+    grid.innerHTML = '';
+    
+    GAME_DATA.CARS.forEach((car, idx) => {
+        const unlocked = gameState.unlockedCars[idx] || gameState.score >= car.unlock;
+        const card = document.createElement('div');
+        card.className = `car-card ${!unlocked ? 'locked' : ''} ${gameState.selectedCar === idx ? 'selected' : ''}`;
+        card.innerHTML = `<div style="font-size: 24px;">🚗</div><div>${car.name}</div><div style="font-size: 11px;">${car.speed}x Speed</div>`;
+        card.onclick = () => {
+            if (unlocked) {
+                document.querySelectorAll('.car-card').forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                gameState.selectedCar = idx;
+            }
+        };
+        grid.appendChild(card);
+    });
+}
+
+function goToMapSelect() {
+    hideAllScreens();
+    document.getElementById('mapSelect').classList.add('active');
+    renderMapGrid();
+}
+
+function renderMapGrid() {
+    const grid = document.getElementById('mapGrid');
+    grid.innerHTML = '';
+    
+    GAME_DATA.MAPS.forEach((map, idx) => {
+        const card = document.createElement('div');
+        card.className = `map-card ${gameState.selectedMap === idx ? 'selected' : ''}`;
+        card.innerHTML = `<div style="font-size: 24px;">🗺️</div><div>${map}</div>`;
+        card.onclick = () => {
+            document.querySelectorAll('.map-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            gameState.selectedMap = idx;
+        };
+        grid.appendChild(card);
+    });
+}
+
+function hideAllScreens() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+}
+
+function startSinglePlayer() {
+    showCarSelect();
+}
+
+function startMultiplayer() {
+    showCarSelect();
+}
+
+function startGame() {
+    hideAllScreens();
+    gameState.gameActive = true;
+    gameState.score = 0;
+    gameState.packages = 0;
+    gameState.combo = 0;
+    gameState.timer = 60;
+    gameState.maxTimer = 60;
+    gameRunning = true;
+    
+    document.getElementById('gameHUD').classList.remove('hidden');
+    document.getElementById('timerContainer').classList.remove('hidden');
+    document.getElementById('leaderboard').classList.remove('hidden');
+    document.getElementById('speedometer').classList.remove('hidden');
+    document.getElementById('minimap').classList.remove('hidden');
+    
+    document.getElementById('hudCar').textContent = GAME_DATA.CARS[gameState.selectedCar].name;
+    document.getElementById('hudMap').textContent = GAME_DATA.MAPS[gameState.selectedMap];
+    
+    initGame();
+}
+
+function gameOver() {
+    gameRunning = false;
+    
+    // Save score
+    gameState.highScores.push({ score: gameState.score, car: GAME_DATA.CARS[gameState.selectedCar].name });
+    gameState.highScores.sort((a, b) => b.score - a.score).splice(10);
+    localStorage.setItem('deadlineScores', JSON.stringify(gameState.highScores));
+    
+    // Unlock cars
+    GAME_DATA.CARS.forEach((car, idx) => {
+        if (gameState.score >= car.unlock) {
+            gameState.unlockedCars[idx] = true;
+        }
+    });
+    localStorage.setItem('unlockedCars', JSON.stringify(gameState.unlockedCars));
+    
+    hideAllScreens();
+    document.getElementById('gameOverScreen').classList.add('active');
+    document.getElementById('finalScore').textContent = gameState.score;
+    document.getElementById('finalPackages').textContent = gameState.packages;
+    document.getElementById('finalCombo').textContent = gameState.combo + 'x';
+}
+
+function restart() {
+    startGame();
+}
+
+function backToMenu() {
+    gameRunning = false;
+    hideAllScreens();
+    document.getElementById('mainMenu').classList.add('active');
+    document.getElementById('gameHUD').classList.add('hidden');
+    document.getElementById('timerContainer').classList.add('hidden');
+    document.getElementById('leaderboard').classList.add('hidden');
+    document.getElementById('speedometer').classList.add('hidden');
+    document.getElementById('minimap').classList.add('hidden');
+}
+
+function showInstructions() {
+    document.getElementById('instructionsModal').classList.add('active');
+}
+
+function showLeaderboard() {
+    const list = document.getElementById('leaderboardList');
+    list.innerHTML = '';
+    gameState.highScores.forEach((score, idx) => {
+        const entry = document.createElement('div');
+        entry.style.cssText = 'padding: 10px; margin: 10px 0; background: rgba(0,255,0,0.1); border-left: 3px solid #00ff00; font-size: 16px;';
+        entry.innerHTML = `<div>#${idx + 1}: <strong style="color: #ffff00;">${score.score}</strong> pts - ${score.car}</div>`;
+        list.appendChild(entry);
+    });
+    document.getElementById('leaderboardModal').classList.add('active');
+}
+
+function closeModal(modalId) {
+    document.getElementById(modalId).classList.remove('active');
+}
+
+// ===== GAME LOGIC =====
+let canvas = document.getElementById('gameCanvas');
+let ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let carX = canvas.width / 2;
+let carY = canvas.height / 2;
+let carVelX = 0;
+let carVelY = 0;
+let carRot = 0;
+let carSpeed = 0;
+let packages_list = [];
+let buildings_list = [];
+let gameStartTime = 0;
+
+function initGame() {
+    carX = canvas.width / 2;
+    carY = canvas.height / 2;
+    carVelX = 0;
+    carVelY = 0;
+    carRot = 0;
+    carSpeed = 0;
+    packages_list = [];
+    buildings_list = [];
+    gameStartTime = Date.now();
+    
+    // Generate buildings
+    for (let i = 0; i < 50; i++) {
+        buildings_list.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            w: 40 + Math.random() * 100,
+            h: 40 + Math.random() * 100
+        });
+    }
+    
+    // Generate packages
+    for (let i = 0; i < 8; i++) {
+        packages_list.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            collected: false
+        });
+    }
+    
+    // Setup minimap
+    let minimap = document.getElementById('minimap');
+    minimap.width = 200;
+    minimap.height = 200;
+    
+    gameLoop();
+}
+
+const keys = {};
+window.addEventListener('keydown', (e) => { keys[e.key] = true; });
+window.addEventListener('keyup', (e) => { keys[e.key] = false; });
+
+function gameLoop() {
+    if (!gameRunning) return;
+    
+    // Update timer
+    gameState.timer = gameState.maxTimer - (Date.now() - gameStartTime) / 1000;
+    if (gameState.timer <= 0) {
+        gameState.timer = 0;
+        gameOver();
+        return;
+    }
+    
+    // Input
+    if (keys['ArrowUp'] || keys['w']) carSpeed += 0.3;
+    if (keys['ArrowDown'] || keys['s']) carSpeed -= 0.3;
+    if (keys['ArrowLeft'] || keys['a']) carRot -= 0.1;
+    if (keys['ArrowRight'] || keys['d']) carRot += 0.1;
+    if (keys[' ']) carSpeed *= 0.95; // Drift slow down
+    
+    carSpeed *= 0.95; // Friction
+    carSpeed = Math.max(-5, Math.min(15, carSpeed));
+    
+    // Update position
+    carVelX += Math.sin(carRot) * carSpeed * 0.5;
+    carVelY += Math.cos(carRot) * carSpeed * 0.5;
+    carVelX *= 0.95;
+    carVelY *= 0.95;
+    
+    carX += carVelX;
+    carY += carVelY;
+    
+    // Boundary
+    carX = Math.max(0, Math.min(canvas.width, carX));
+    carY = Math.max(0, Math.min(canvas.height, carY));
+    
+    // Collision with buildings
+    buildings_list.forEach(b => {
+        if (carX > b.x - 30 && carX < b.x + b.w + 30 &&
+            carY > b.y - 30 && carY < b.y + b.h + 30) {
+            carSpeed *= -0.5;
+            gameState.combo = 0;
+        }
+    });
+    
+    // Package collection
+    packages_list.forEach((pkg, idx) => {
+        if (!pkg.collected) {
+            const dx = carX - pkg.x;
+            const dy = carY - pkg.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist < 30) {
+                pkg.collected = true;
+                gameState.score += 100 + (gameState.combo * 50);
+                gameState.packages++;
+                gameState.combo++;
+                gameState.timer = Math.min(gameState.timer + 8, gameState.maxTimer);
+                
+                // New package
+                packages_list[idx] = {
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    collected: false
+                };
+            }
+        }
+    });
+    
+    // Draw
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw background
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw buildings
+    ctx.fillStyle = '#555';
+    buildings_list.forEach(b => {
+        ctx.fillRect(b.x, b.y, b.w, b.h);
+    });
+    
+    // Draw packages
+    ctx.fillStyle = '#ffff00';
+    packages_list.forEach(pkg => {
+        if (!pkg.collected) {
+            ctx.fillRect(pkg.x - 15, pkg.y - 15, 30, 30);
+        }
+    });
+    
+    // Draw car
+    ctx.save();
+    ctx.translate(carX, carY);
+    ctx.rotate(carRot);
+    ctx.fillStyle = '#ff3333';
+    ctx.fillRect(-20, -30, 40, 60);
+    ctx.restore();
+    
+    // Update HUD
+    document.getElementById('hudScore').textContent = gameState.score;
+    document.getElementById('hudPackages').textContent = gameState.packages + '/∞';
+    document.getElementById('hudCombo').textContent = gameState.combo + 'x';
+    document.getElementById('speedometer').textContent = Math.abs(Math.round(carSpeed * 10)) + ' MPH';
+    
+    // Update timer bar
+    const timerPercent = (gameState.timer / gameState.maxTimer) * 100;
+    document.getElementById('timerBar').style.width = timerPercent + '%';
+    document.getElementById('timerText').textContent = 'TIME: ' + gameState.timer.toFixed(1) + 's';
+    
+    // Update minimap
+    drawMinimap();
+    
+    requestAnimationFrame(gameLoop);
+}
+
+function drawMinimap() {
+    const minimap = document.getElementById('minimap');
+    if (!minimap || minimap.classList.contains('hidden')) return;
+    
+    const ctx = minimap.getContext('2d');
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, 200, 200);
+    
+    const scaleX = 200 / canvas.width;
+    const scaleY = 200 / canvas.height;
+    
+    // Buildings
+    ctx.fillStyle = '#555';
+    buildings_list.forEach(b => {
+        ctx.fillRect(b.x * scaleX, b.y * scaleY, b.w * scaleX, b.h * scaleY);
+    });
+    
+    // Packages
+    ctx.fillStyle = '#ffff00';
+    packages_list.forEach(pkg => {
+        ctx.fillRect(pkg.x * scaleX - 5, pkg.y * scaleY - 5, 10, 10);
+    });
+    
+    // Car
+    ctx.fillStyle = '#00ff00';
+    ctx.fillRect(carX * scaleX - 5, carY * scaleY - 5, 10, 10);
+}
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    // Update leaderboard widget
+    const widget = document.getElementById('leaderboardWidget');
+    gameState.highScores.slice(0, 5).forEach((score, idx) => {
+        const entry = document.createElement('div');
+        entry.className = 'leaderboard-entry';
+        entry.innerHTML = `<span>#${idx + 1}</span><span>${score.score}</span>`;
+        widget.appendChild(entry);
+    });
+});
+</script>
+
+</body>
+</html>
